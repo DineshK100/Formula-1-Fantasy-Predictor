@@ -1,6 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+from pymongo import MongoClient, errors
+from datetime import datetime
+import time
+import certifi
 
 # Function to get all race URLs for a given year
 def get_race_urls(year):
@@ -16,7 +20,7 @@ def get_race_urls(year):
         if f"{year}-" in href and "-grand-prix" in href:
             race_urls.append(f"https://pitwall.app{href}")
 
-    # Sort URLs based on appearance (usually corresponds to the order of races)
+    # Sort URLs based on appearance (alphabetically to maintain order even if the order of GPs changes)
     race_urls = sorted(set(race_urls))
     return race_urls
 
@@ -26,9 +30,6 @@ def get_race_results(url):
     soup = BeautifulSoup(response.content, "html.parser")
 
     table = soup.find('table')
-    if not table:
-        print(f"No table found for URL: {url}")
-        return None
     
     headers = [header.text.strip() for header in table.find_all('th')]
     rows = table.find_all('tr')
@@ -42,10 +43,16 @@ def get_race_results(url):
     df = pd.DataFrame(results, columns=headers)
     return df
 
-# Scrape data for the specified years and save to CSV
-start_year = 2023
+# Connect to MongoDB with certifi for SSL certificates needed to do it this way because of multitude of connectivity issues
+client = MongoClient(
+    'mongodb+srv://dineshrkarnati:Collegeadmissio@formulafantasy.v9quue6.mongodb.net/?retryWrites=true&w=majority',
+    tlsCAFile=certifi.where()
+)
+db = client['formula']
+
+# Scrape data for the specified years and save to MongoDB
+start_year = 2021
 end_year = 2015
-all_results = []
 
 for year in range(start_year, end_year - 1, -1):
     race_urls = get_race_urls(year)
@@ -53,11 +60,11 @@ for year in range(start_year, end_year - 1, -1):
         df = get_race_results(race_url)
         if df is not None:
             df['Year'] = year
-            print(f"Scraped data for year: {year}, race: {race_url}")
-            all_results.append(df)
+            race_name = race_url.split('/')[-1].replace(f'{year}-', '').replace('-grand-prix', '').replace('-', ' ')
+            collection_name = f"{race_name}_grand_prix"
+            collection = db[collection_name]
+            print(f"Scraped data for year: {year}, race: {race_url}, storing in collection: {collection_name}")
+            data_dict = df.to_dict("records")
+            collection.insert_many(data_dict)
 
-if all_results:
-    final_df = pd.concat(all_results, ignore_index=True)
-    final_df.to_csv('f1_grand_prix_2015_2023.csv', index=False)
-
-print("Finished collecting all the data!")
+print("Data collection and insertion into MongoDB complete.")
