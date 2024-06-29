@@ -51,8 +51,8 @@ client = MongoClient(
 db = client['formula']
 
 # Scrape data for the specified years and save to MongoDB
-start_year = 2021
-end_year = 2015
+start_year = 2003
+end_year = 1990
 
 for year in range(start_year, end_year - 1, -1):
     race_urls = get_race_urls(year)

@@ -2,17 +2,17 @@ import pandas as pd
 from pymongo import MongoClient
 import certifi
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn import metrics
-from sklearn.metrics import classification_report
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score
+import xgboost as xgb
 
-
-#Gets data ready by pulling that specific race data from the database
+# Gets data ready by pulling that specific race data from the database
 def loadDataBaseData(raceName):
     client = MongoClient(
         'mongodb+srv://dineshrkarnati:Collegeadmissio@formulafantasy.v9quue6.mongodb.net/?retryWrites=true&w=majority',
         tlsCAFile=certifi.where()
     )
+    
     db = client['formula']
     collection = db[raceName]
 
@@ -30,40 +30,52 @@ def loadDataBaseData(raceName):
     data = data.dropna(subset=['Grid'])  # Drop rows where 'Grid' conversion failed
     data['Grid'] = data['Grid'].astype(int)
 
+    # Convert 'Laps' to integer
+    data['Laps'] = data['Laps'].apply(lambda x: int(x) if x.isdigit() else None)
+    data = data.dropna(subset=['Laps'])
+    data['Laps'] = data['Laps'].astype(int)
+
     data = pd.get_dummies(data, columns=['Driver', 'Constructor'])
 
     return data
 
 def selectFeatures(data):
-
     features = ['Grid', 'Laps', 'Points'] + [col for col in data.columns if 'Driver_' in col or 'Constructor_' in col]
-    X = data[features]
     #The important feature set for the prediction variable (like here name, constructor, etc)
     X = data[features]
     #What we want to predict i.e here what position each driver will land
     y = data['Pos.']
+    return X, y
 
-    return X,y
+def trainModel(X, y):
 
-def trainModel(X,y):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=10)
-    model = RandomForestClassifier(n_estimators=100)
+    # Encode target variable (converts categorical data into numbers for model to understand)
+    label_encoder = LabelEncoder()
+    y_encoded = label_encoder.fit_transform(y)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.1, random_state=10)
+
+    # Initialize the XGBoost model
+    model = xgb.XGBClassifier(random_state=42, use_label_encoder=False)
+
+    # Fit the model to the training data
     model.fit(X_train, y_train)
 
-    #Finally making predictions
-    prediction = model.predict(X_test)
-    accuracy = metrics.accuracy_score(y_test, prediction)
-    print("Accuracy report : ", accuracy)
+    # Make predictions on the test data
+    y_pred = model.predict(X_test)
 
-    #Maybe include classification report
+    # Calculate and print the accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+    print("Accuracy of XGBoost Model:", accuracy)
 
     return model, X_train, y_train
 
 def main():
-    race_name = 'abu dhabi_grand_prix'
+    race_name = 'italian_grand_prix'
     data = loadDataBaseData(race_name)
+   
     X, y = selectFeatures(data)
     model, X_train, y_train = trainModel(X, y)
 
 if __name__ == "__main__":
-    main() 
+    main()
