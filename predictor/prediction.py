@@ -66,4 +66,4 @@ def main():
     model, X_train, y_train = trainModel(X, y)
 
 if __name__ == "__main__":
-    main()
+    main() 
