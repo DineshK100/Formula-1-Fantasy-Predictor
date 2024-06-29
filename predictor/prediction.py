@@ -12,11 +12,14 @@ def loadDataBaseData(raceName):
         'mongodb+srv://dineshrkarnati:Collegeadmissio@formulafantasy.v9quue6.mongodb.net/?retryWrites=true&w=majority',
         tlsCAFile=certifi.where()
     )
-    
     db = client['formula']
     collection = db[raceName]
 
     data = pd.DataFrame(list(collection.find()))
+
+    retired_drivers = ['Nigel Mansell', 'Alain Prost', 'Ayrton Senna', 'Gerhard Berger', 'Riccardo Patrese', 'Jean Alesi', 'Mika Häkkinen', 'Damon Hill', 'Johnny Herbert', 'Eddie Irvine', 'Michael Schumacher', 'David Coulthard', 'Rubens Barrichello', 'Felipe Massa', 'Jenson Button', 'Mark Webber', 'Nico Rosberg', 'Kimi Räikkönen', 'Sebastian Vettel', 'Romain Grosjean', 'Robert Kubica', 'Daniil Kvyat', 'Heikki Kovalainen', 'Pastor Maldonado', 'Bruno Senna', 'Paul di Resta', 'Marcus Ericsson', 'Pascal Wehrlein', 'Stoffel Vandoorne', 'Sergey Sirotkin', 'Esteban Gutierrez', 'Jolyon Palmer', 'Felipe Nasr', 'Kamui Kobayashi', 'Vitaly Petrov', 'Narain Karthikeyan', 'Karun Chandhok', 'Timo Glock', 'Nick Heidfeld', 'Jarno Trulli', 'Pedro de la Rosa', 'Vitantonio Liuzzi', 'Adrian Sutil', 'Jaime Alguersuari']
+
+    data = data[~data['Driver'].isin(retired_drivers)]
 
     # Handle non-integer and empty string values in 'Pos.' column
     data = data[data['Pos.'].apply(lambda x: x.isdigit() and x != '')]
@@ -41,15 +44,12 @@ def loadDataBaseData(raceName):
 
 def selectFeatures(data):
     features = ['Grid', 'Laps', 'Points'] + [col for col in data.columns if 'Driver_' in col or 'Constructor_' in col]
-    #The important feature set for the prediction variable (like here name, constructor, etc)
     X = data[features]
-    #What we want to predict i.e here what position each driver will land
     y = data['Pos.']
     return X, y
 
 def trainModel(X, y):
-
-    # Encode target variable (converts categorical data into numbers for model to understand)
+    # Encode target variable
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
 
@@ -71,9 +71,8 @@ def trainModel(X, y):
     return model, X_train, y_train
 
 def main():
-    race_name = 'italian_grand_prix'
+    race_name = 'austrian_grand_prix'
     data = loadDataBaseData(race_name)
-   
     X, y = selectFeatures(data)
     model, X_train, y_train = trainModel(X, y)
 
