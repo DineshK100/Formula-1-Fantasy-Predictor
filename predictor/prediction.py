@@ -68,13 +68,15 @@ def trainModel(X, y):
     accuracy = accuracy_score(y_test, y_pred)
     print("Accuracy of XGBoost Model:", accuracy)
 
-    return model, X_train, y_train
+    return model
+    
 
 def main():
     race_name = 'austrian_grand_prix'
     data = loadDataBaseData(race_name)
     X, y = selectFeatures(data)
-    model, X_train, y_train = trainModel(X, y)
+    model = trainModel(X, y)
+
 
 if __name__ == "__main__":
     main()
