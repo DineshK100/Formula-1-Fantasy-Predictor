@@ -1,9 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-from pymongo import MongoClient, errors
-from datetime import datetime
-import time
+from pymongo import MongoClient
 import certifi
 
 # Function to get all race URLs for a given year
