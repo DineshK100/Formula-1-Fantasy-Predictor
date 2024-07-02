@@ -25,7 +25,7 @@ def loadDataBaseData(raceName):
 
     data['Points'] = data['Points'].replace('', '0').astype(int)
 
-    data['Grid'] = data['Grid'].apply(lambda x: int(x.rstrip('stndrdth')) if x.rstrip('stndrdth').isdigit() else None)
+    data['Grid'] = data['Grid'].apply(lambda x: int(x.rstrip('stndrdth')) if isinstance(x, str) and x.rstrip('stndrdth').isdigit() else None)
     data = data.dropna(subset=['Grid'])
     data['Grid'] = data['Grid'].astype(int)
 
@@ -51,12 +51,14 @@ def calculateSampleWeights(data):
     data['Weight'] = 1 / (current_year - data['Year'] + 1)
     return data['Weight']
 
+
 def trainModel(X, y, sample_weights):
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
 
+
     X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(
-        X, y_encoded, sample_weights, test_size=0.1, random_state=42
+        X, y_encoded, sample_weights, test_size=0.1, random_state=42, stratify=y_encoded
     )
 
     model = xgb.XGBClassifier(random_state=42, use_label_encoder=False)
@@ -69,13 +71,7 @@ def trainModel(X, y, sample_weights):
         'colsample_bytree': [0.8]
     }
 
-    min_class_size = min(pd.Series(y_encoded).value_counts())
-    n_splits = min(3, min_class_size)
-    if n_splits < 2:
-        n_splits = 2
-
-    print("Starting grid search with n_splits =", n_splits)
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring='accuracy', cv=n_splits, n_jobs=-1)
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring='accuracy', n_jobs=-1)
     grid_search.fit(X_train, y_train, sample_weight=sample_weights_train)
 
     best_model = grid_search.best_estimator_
@@ -103,7 +99,7 @@ def main():
     model, label_encoder = trainModel(X, y, sample_weights)
 
     new_data = pd.DataFrame({
-        'Grid': [1, 2, 3],
+        'Grid': [7, 2, 3],
         'Laps': [71, 71, 71],
         'Points': [26, 18, 15]
     })
