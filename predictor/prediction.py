@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKF
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 import xgboost as xgb
+from math import ceil
 
 def loadDataBaseData(raceName):
     client = MongoClient(
@@ -23,9 +24,9 @@ def loadDataBaseData(raceName):
     data = data[data['Pos.'].apply(lambda x: x.isdigit() and x != '')]
     data['Pos.'] = data['Pos.'].astype(int)
 
-    data['Points'] = data['Points'].replace('', '0').astype(int)
+    data['Points'] = data['Points'].replace('', '0').astype(float).apply(lambda x: ceil(x)).astype(int)
 
-    data['Grid'] = data['Grid'].apply(lambda x: int(x.rstrip('stndrdth')) if isinstance(x, str) and x.rstrip('stndrdth').isdigit() else None)
+    data['Grid'] = data['Grid'].apply(lambda x: int(x.rstrip('stndrdth')) if isinstance(x, str) and x.rstrip('stndrdth').isdigit() else pd.NA)
     data = data.dropna(subset=['Grid'])
     data['Grid'] = data['Grid'].astype(int)
 
@@ -51,14 +52,13 @@ def calculateSampleWeights(data):
     data['Weight'] = 1 / (current_year - data['Year'] + 1)
     return data['Weight']
 
-
 def trainModel(X, y, sample_weights):
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
 
 
     X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(
-        X, y_encoded, sample_weights, test_size=0.1, random_state=42, stratify=y_encoded
+        X, y_encoded, sample_weights, test_size=0.1, random_state=42
     )
 
     model = xgb.XGBClassifier(random_state=42, use_label_encoder=False)
@@ -92,18 +92,20 @@ def predictPodium(best_model, label_encoder, new_data, original_drivers, origina
     print(top_3_winners[['Driver', 'Constructor', 'Grid', 'Laps', 'Points', 'Predicted_Position']])
 
 def main():
-    race_name = 'monaco_grand_prix'
+    race_name = 'qatar_grand_prix'
     data, drivers, constructors = loadDataBaseData(race_name)
     sample_weights = calculateSampleWeights(data)
     X, y = selectFeatures(data)
     model, label_encoder = trainModel(X, y, sample_weights)
 
     new_data = pd.DataFrame({
-        'Grid': [7, 2, 3],
+        'Grid': [1, 2, 3],
         'Laps': [71, 71, 71],
         'Points': [26, 18, 15]
     })
 
+    # Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2
+    
     dummy_columns = {col: [0, 0, 0] for col in X.columns if col not in new_data.columns}
     dummy_df = pd.DataFrame(dummy_columns)
 
