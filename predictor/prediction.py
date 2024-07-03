@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from pymongo import MongoClient
 import certifi
 from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
@@ -56,7 +57,6 @@ def trainModel(X, y, sample_weights):
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
 
-
     X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(
         X, y_encoded, sample_weights, test_size=0.1, random_state=42
     )
@@ -71,7 +71,7 @@ def trainModel(X, y, sample_weights):
         'colsample_bytree': [0.8]
     }
 
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring='accuracy', n_jobs=-1)
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring='accuracy', n_jobs=-1, cv=2, error_score='raise')
     grid_search.fit(X_train, y_train, sample_weight=sample_weights_train)
 
     best_model = grid_search.best_estimator_
@@ -82,36 +82,39 @@ def trainModel(X, y, sample_weights):
 
     return best_model, label_encoder
 
-def predictPodium(best_model, label_encoder, new_data, original_drivers, original_constructors):
+def predictTop20(best_model, label_encoder, new_data, original_drivers, original_constructors):
     new_predictions = best_model.predict(new_data)
     new_data['Predicted_Position'] = new_predictions
-    new_data['Predicted_Position'] = label_encoder.inverse_transform(new_data['Predicted_Position'])
     new_data['Driver'] = original_drivers.head(len(new_data)).values
     new_data['Constructor'] = original_constructors.head(len(new_data)).values
-    top_3_winners = new_data.sort_values(by='Predicted_Position').head(3)
-    print(top_3_winners[['Driver', 'Constructor', 'Grid', 'Laps', 'Points', 'Predicted_Position']])
+
+    # Sort by predicted position and drop duplicates
+    new_data = new_data.sort_values(by='Predicted_Position').drop_duplicates(subset=['Driver']).head(20)
+
+    # Assign unique predicted positions
+    new_data['Predicted_Position'] = range(1, len(new_data) + 1)
+
+    print(new_data[['Driver', 'Constructor', 'Grid', 'Laps', 'Points', 'Predicted_Position']])
 
 def main():
-    race_name = 'qatar_grand_prix'
+    race_name = 'austrian_grand_prix'
     data, drivers, constructors = loadDataBaseData(race_name)
     sample_weights = calculateSampleWeights(data)
     X, y = selectFeatures(data)
     model, label_encoder = trainModel(X, y, sample_weights)
 
     new_data = pd.DataFrame({
-        'Grid': [1, 2, 3],
-        'Laps': [71, 71, 71],
-        'Points': [26, 18, 15]
+        'Grid': [i for i in range(1, 21)],
+        'Laps': [71 for _ in range(20)],
+        'Points': [26 - i for i in range(20)]
     })
 
-    # Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2
-    
-    dummy_columns = {col: [0, 0, 0] for col in X.columns if col not in new_data.columns}
+    dummy_columns = {col: [0] * 20 for col in X.columns if col not in new_data.columns}
     dummy_df = pd.DataFrame(dummy_columns)
 
     new_data = pd.concat([new_data, dummy_df], axis=1)
 
-    predictPodium(model, label_encoder, new_data, drivers, constructors)
-
+    predictTop20(model, label_encoder, new_data, drivers, constructors)
+# Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2
 if __name__ == "__main__":
     main()
