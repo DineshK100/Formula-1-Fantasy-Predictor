@@ -61,17 +61,17 @@ def trainModel(X, y, sample_weights):
         X, y_encoded, sample_weights, test_size=0.1, random_state=42
     )
 
-    model = xgb.XGBClassifier(random_state=42, use_label_encoder=False)
+    model = xgb.XGBClassifier(random_state=42)
 
     param_grid = {
-        'n_estimators': [100],
-        'max_depth': [3],
-        'learning_rate': [0.1],
-        'subsample': [0.8],
-        'colsample_bytree': [0.8]
+        'n_estimators': [100, 200],
+        'max_depth': [3, 5, 7],
+        'learning_rate': [0.01, 0.1, 0.2],
+        'subsample': [0.8,  1.0],
+        'colsample_bytree': [0.8, 1.0]
     }
 
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring='accuracy', n_jobs=-1, cv=2, error_score='raise')
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring='accuracy', n_jobs=-1, cv=5, error_score='raise')
     grid_search.fit(X_train, y_train, sample_weight=sample_weights_train)
 
     best_model = grid_search.best_estimator_
@@ -82,22 +82,72 @@ def trainModel(X, y, sample_weights):
 
     return best_model, label_encoder
 
-def predictTop20(best_model, label_encoder, new_data, original_drivers, original_constructors):
+def predictTop20(best_model, label_encoder, new_data, original_drivers, original_constructors, allowed_drivers):
     new_predictions = best_model.predict(new_data)
     new_data['Predicted_Position'] = new_predictions
     new_data['Driver'] = original_drivers.head(len(new_data)).values
     new_data['Constructor'] = original_constructors.head(len(new_data)).values
 
-    # Sort by predicted position and drop duplicates
-    new_data = new_data.sort_values(by='Predicted_Position').drop_duplicates(subset=['Driver']).head(20)
+    # Filter by allowed drivers
+    new_data = new_data[new_data['Driver'].isin(allowed_drivers)]
 
-    # Assign unique predicted positions
+    # Sort by predicted position and drop duplicates
+    new_data = new_data.sort_values(by='Predicted_Position').drop_duplicates(subset=['Driver'])
+
+    # Ensure unique predicted positions
+    new_data['Predicted_Position'] = range(1, len(new_data) + 1)
+
+    # Mapping of drivers to constructors
+    driver_constructor_mapping = {
+        '#1 Max Verstappen': 'Red Bull',
+        '#4 Lando Norris': 'McLaren',
+        '#16 Charles Leclerc': 'Ferrari',
+        '#55 Carlos Sainz Jr.': 'Ferrari',
+        '#11 Sergio Pérez': 'Red Bull',
+        '#81 Oscar Piastri': 'McLaren',
+        '#63 George Russell': 'Mercedes',
+        '#44 Lewis Hamilton': 'Mercedes',
+        '#14 Fernando Alonso': 'Aston Martin',
+        '#22 Yuki Tsunoda': 'AlphaTauri',
+        '#10 Pierre Gasly': 'Alpine',
+        '#31 Esteban Ocon': 'Alpine',
+        '#77 Valtteri Bottas': 'Alfa Romeo',
+        '#24 Guanyu Zhou': 'Alfa Romeo',
+        '#27 Nico Hülkenberg': 'Haas',
+        '#20 Kevin Magnussen': 'Haas',
+        '#23 Alexander Albon': 'Williams',
+        '#2 Logan Sargeant': 'Williams',
+        '#18 Lance Stroll': 'Aston Martin',
+        '#3 Daniel Ricciardo': 'McLaren'
+    }
+
+    # Handle cases where there are still less than 20 drivers
+    missing_drivers = [driver for driver in allowed_drivers if driver not in new_data['Driver'].values]
+    for i, driver in enumerate(missing_drivers):
+        new_row = pd.DataFrame({
+            'Grid': [0], 'Laps': [0], 'Points': [0], 
+            'Predicted_Position': [len(new_data) + 1 + i], 
+            'Driver': [driver], 'Constructor': [driver_constructor_mapping[driver]]
+        })
+        new_data = pd.concat([new_data, new_row], ignore_index=True)
+
+    # Assign unique predicted positions again to ensure the range from 1 to 20
     new_data['Predicted_Position'] = range(1, len(new_data) + 1)
 
     print(new_data[['Driver', 'Constructor', 'Grid', 'Laps', 'Points', 'Predicted_Position']])
+    return new_data
 
 def main():
-    race_name = 'austrian_grand_prix'
+    race_name = 'australian_grand_prix'
+    allowed_drivers = [
+        '#1 Max Verstappen', '#4 Lando Norris', '#16 Charles Leclerc', 
+        '#55 Carlos Sainz Jr.', '#11 Sergio Pérez', '#81 Oscar Piastri', 
+        '#63 George Russell', '#44 Lewis Hamilton', '#14 Fernando Alonso', 
+        '#22 Yuki Tsunoda', '#10 Pierre Gasly', '#31 Esteban Ocon', 
+        '#77 Valtteri Bottas', '#24 Guanyu Zhou', '#27 Nico Hülkenberg', 
+        '#20 Kevin Magnussen', '#23 Alexander Albon', '#2 Logan Sargeant', 
+        '#18 Lance Stroll', '#3 Daniel Ricciardo'
+    ]
     data, drivers, constructors = loadDataBaseData(race_name)
     sample_weights = calculateSampleWeights(data)
     X, y = selectFeatures(data)
@@ -114,7 +164,14 @@ def main():
 
     new_data = pd.concat([new_data, dummy_df], axis=1)
 
-    predictTop20(model, label_encoder, new_data, drivers, constructors)
-# Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2
+    predictTop20(model, label_encoder, new_data, drivers, constructors, allowed_drivers)
+
 if __name__ == "__main__":
     main()
+
+# Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2
+# Maybe scrape qualifying and sprint and free practice data?
+# Make it so that the 20 drivers that show up are the exact 20 that are in the race lineup
+# Make the model predict based on the inputted grid instead of the grid data on the database to make the prediction more accurate
+# Make the accuracy score be calculated after the predicted positions are sorted and ordered
+# Maybe make it so that the laps are not predicted and that the points are accurate based on the formula 1 rules
