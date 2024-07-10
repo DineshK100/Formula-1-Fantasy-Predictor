@@ -1,3 +1,10 @@
+# # Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2
+# # Maybe scrape qualifying and sprint and free practice data? Or combine all those races together as they are newer
+# # Make the model predict based on the inputted grid instead of the grid data on the database to make the prediction more accurate
+# # Make the accuracy score be calculated after the predicted positions are sorted and ordered
+# # Maybe make it so that the laps are not predicted and that the points are accurate based on the formula 1 rules
+# # Do more data optimization to get rid of data from old constructors as well
+
 import pandas as pd
 import numpy as np
 from pymongo import MongoClient
@@ -40,22 +47,43 @@ def loadDataBaseData(raceName):
 
     data = pd.get_dummies(data, columns=['Driver', 'Constructor'])
 
+    # Add the original Driver and Constructor columns back to the data
+    data['Driver'] = drivers
+    data['Constructor'] = constructors
+
     return data, drivers, constructors
 
 def selectFeatures(data):
-    features = ['Grid', 'Laps', 'Points'] + [col for col in data.columns if 'Driver_' in col or 'Constructor_' in col]
+    data['Grid_Laps'] = data['Grid'] * data['Laps']
+    data['Grid_Points'] = data['Grid'] * data['Points']
+    
+    features = ['Grid', 'Laps', 'Points', 'Grid_Laps', 'Grid_Points'] + [col for col in data.columns if 'Driver_' in col or 'Constructor_' in col]
     X = data[features]
     y = data['Pos.']
     return X, y
 
 def calculateSampleWeights(data):
     current_year = data['Year'].max()
+    
+    # Base weight based on recency
     data['Weight'] = 1 / (current_year - data['Year'] + 1)
+    
+    # Additional weight for recent years
+    data['Year_Weight'] = data['Year'].apply(lambda x: 1.5 if current_year - x <= 2 else 1)
+    
+    # Additional weight for grid positions
+    data['Grid_Weight'] = data['Grid'].apply(lambda x: 2 if x <= 5 else 1.5)
+    
+    # Combine the weights
+    data['Weight'] *= data['Year_Weight'] * data['Grid_Weight']
+    
     return data['Weight']
 
 def trainModel(X, y, sample_weights):
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
+
+    X['Grid'] *= 5 # Emphasize the grid positions
 
     X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(
         X, y_encoded, sample_weights, test_size=0.1, random_state=42
@@ -64,7 +92,7 @@ def trainModel(X, y, sample_weights):
     model = xgb.XGBClassifier(random_state=42)
 
     param_grid = {
-        'n_estimators': [100, 200],
+        'n_estimators': [100],
         'max_depth': [3, 5, 7],
         'learning_rate': [0.01, 0.1, 0.2],
         'subsample': [0.8,  1.0],
@@ -138,7 +166,8 @@ def predictTop20(best_model, label_encoder, new_data, original_drivers, original
     return new_data
 
 def main():
-    race_name = 'australian_grand_prix'
+    
+    race_name = 'italian_grand_prix'
     allowed_drivers = [
         '#1 Max Verstappen', '#4 Lando Norris', '#16 Charles Leclerc', 
         '#55 Carlos Sainz Jr.', '#11 Sergio Pérez', '#81 Oscar Piastri', 
@@ -148,6 +177,7 @@ def main():
         '#20 Kevin Magnussen', '#23 Alexander Albon', '#2 Logan Sargeant', 
         '#18 Lance Stroll', '#3 Daniel Ricciardo'
     ]
+
     data, drivers, constructors = loadDataBaseData(race_name)
     sample_weights = calculateSampleWeights(data)
     X, y = selectFeatures(data)
@@ -168,10 +198,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2
-# Maybe scrape qualifying and sprint and free practice data?
-# Make it so that the 20 drivers that show up are the exact 20 that are in the race lineup
-# Make the model predict based on the inputted grid instead of the grid data on the database to make the prediction more accurate
-# Make the accuracy score be calculated after the predicted positions are sorted and ordered
-# Maybe make it so that the laps are not predicted and that the points are accurate based on the formula 1 rules
