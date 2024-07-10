@@ -1,10 +1,12 @@
 # # Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2
-# # Maybe scrape qualifying and sprint and free practice data?
+# # Maybe scrape qualifying and sprint and free practice data? Or combine all those races together as they are newer
 # # Make the model predict based on the inputted grid instead of the grid data on the database to make the prediction more accurate
 # # Make the accuracy score be calculated after the predicted positions are sorted and ordered
 # # Maybe make it so that the laps are not predicted and that the points are accurate based on the formula 1 rules
+# # Do more data optimization to get rid of data from old constructors as well
 
 import pandas as pd
+import numpy as np
 from pymongo import MongoClient
 import certifi
 from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
@@ -45,6 +47,10 @@ def loadDataBaseData(raceName):
 
     data = pd.get_dummies(data, columns=['Driver', 'Constructor'])
 
+    # Add the original Driver and Constructor columns back to the data
+    data['Driver'] = drivers
+    data['Constructor'] = constructors
+
     return data, drivers, constructors
 
 def selectFeatures(data):
@@ -77,22 +83,23 @@ def trainModel(X, y, sample_weights):
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
 
+    X['Grid'] *= 5 # Emphasize the grid positions
 
     X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(
         X, y_encoded, sample_weights, test_size=0.1, random_state=42
     )
 
-    model = xgb.XGBClassifier(random_state=42, use_label_encoder=False)
+    model = xgb.XGBClassifier(random_state=42)
 
     param_grid = {
-        'n_estimators': [100, 200],
-        'max_depth': [3, 5],
-        'learning_rate': [0.1, 0.01, 0.02],
-        'subsample': [0.8],
-        'colsample_bytree': [0.8]
+        'n_estimators': [100],
+        'max_depth': [3, 5, 7],
+        'learning_rate': [0.01, 0.1, 0.2],
+        'subsample': [0.8,  1.0],
+        'colsample_bytree': [0.8, 1.0]
     }
 
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring='accuracy', n_jobs=-1)
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring='accuracy', n_jobs=-1, cv=5, error_score='raise')
     grid_search.fit(X_train, y_train, sample_weight=sample_weights_train)
 
     best_model = grid_search.best_estimator_
@@ -160,7 +167,7 @@ def predictTop20(best_model, label_encoder, new_data, original_drivers, original
 
 def main():
     
-    race_name = 'spanish_grand_prix'
+    race_name = 'italian_grand_prix'
     allowed_drivers = [
         '#1 Max Verstappen', '#4 Lando Norris', '#16 Charles Leclerc', 
         '#55 Carlos Sainz Jr.', '#11 Sergio Pérez', '#81 Oscar Piastri', 
