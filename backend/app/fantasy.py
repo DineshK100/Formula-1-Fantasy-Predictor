@@ -11,14 +11,12 @@ def simulate_event(data, event_name):
         event_positions = model.predict(X)
         data['Qualifying_Pos'] = label_encoder.inverse_transform(event_positions)
         data['Qualifying_Points'] = data['Qualifying_Pos'].apply(lambda x: max(10 - x + 1, 0))
-        print(pd.DataFrame(data, columns=['Constructor', 'Price', 'Fantasy_Points']))
-    
+
     elif event_name == "sprint":
         event_positions = model.predict(X)
         data['Sprint_Pos'] = label_encoder.inverse_transform(event_positions)
         data['Sprint_Points'] = data['Sprint_Pos'].apply(lambda x: max(8 - x + 1, 0))
         data['Sprint_Points'] += 5  # Simulating overtakes and positions gained
-        print(pd.DataFrame(data, columns=['Constructor', 'Price', 'Fantasy_Points']))
 
     return data
 
@@ -83,8 +81,9 @@ def optimize_team(drivers_data, budget, driver_prices, constructor_prices):
     return selected_drivers, selected_constructors
 
 def main():
-    race_name = 'monaco_grand_prix'
+    race_name = 'australian_grand_prix'
     budget = 100
+    
     driver_prices = {
         '#1 Max Verstappen': 31.0,
         '#4 Lando Norris': 26.1,

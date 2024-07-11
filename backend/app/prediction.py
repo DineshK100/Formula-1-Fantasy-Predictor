@@ -4,6 +4,9 @@
 # # Make the accuracy score be calculated after the predicted positions are sorted and ordered
 # # Maybe make it so that the laps are not predicted and that the points are accurate based on the formula 1 rules
 # # Do more data optimization to get rid of data from old constructors as well
+# # I like the idea of logging in and signing up and tracking your own predictions and points over the season
+# # I also like the idea of real time gp updates
+# # I also like the idea of incorporating F1 stream compatability
 
 import pandas as pd
 import numpy as np
