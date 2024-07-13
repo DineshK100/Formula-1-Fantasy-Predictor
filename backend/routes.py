@@ -4,12 +4,11 @@ bp = Blueprint('main', __name__)
 
 @bp.route("/")
 def home():
-    return "Hello starting the website"
+    return "Hello Home page"
 
 @bp.route("/predict")
 def predict():
     return {"message": "Hello starting the prediction"}
-
 
 @bp.route("/fantasy")
 def fantasy():

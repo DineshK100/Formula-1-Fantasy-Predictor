@@ -1,4 +1,4 @@
-# # Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2
+# # Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2, italian
 # # Maybe scrape qualifying and sprint and free practice data? Or combine all those races together as they are newer
 # # Make the model predict based on the inputted grid instead of the grid data on the database to make the prediction more accurate
 # # Make the accuracy score be calculated after the predicted positions are sorted and ordered
@@ -7,6 +7,7 @@
 # # I like the idea of logging in and signing up and tracking your own predictions and points over the season
 # # I also like the idea of real time gp updates
 # # I also like the idea of incorporating F1 stream compatability
+# # Optimize 
 
 import pandas as pd
 import numpy as np

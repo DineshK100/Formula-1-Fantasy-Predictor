@@ -47,7 +47,7 @@ def optimize_team(drivers_data, budget, driver_prices, constructor_prices):
     drivers_data = calculate_fantasy_points(drivers_data)
     drivers_data['Price'] = drivers_data['Driver'].map(driver_prices)
 
-    # Handle NaN prices by removing those drivers
+   
     drivers_data = drivers_data.dropna(subset=['Price'])
 
     driver_items = list(drivers_data[['Driver', 'Price', 'Fantasy_Points']].drop_duplicates().itertuples(index=False, name=None))
@@ -81,7 +81,7 @@ def optimize_team(drivers_data, budget, driver_prices, constructor_prices):
     return selected_drivers, selected_constructors
 
 def main():
-    race_name = 'australian_grand_prix'
+    race_name = 'spanish_grand_prix'
     budget = 100
     
     driver_prices = {
