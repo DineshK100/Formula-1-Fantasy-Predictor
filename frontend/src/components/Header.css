@@ -1,63 +1,38 @@
+body {
+    overflow-x: hidden;
+}
+
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1em;
-    background-color: 	white;
-    color: black;
-  }
-  
-  .logo {
-    font-size: 1.5em;
-  }
-  
-  .navbar ul {
-    list-style: none;
-    display: flex;
-    gap: 1em;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .navbar ul li {
-    margin: 0;
-  }
-  
-  .navbar ul li a {
-    color: black;
-    text-decoration: none;
-  }
-  
-  .navbar ul li a:hover {
-    text-decoration: underline;
-  }
-  
-  .line {
     position: absolute;
-    top: 80px; 
-    left: 0;
-    right: 0;
-    height: 6px;
-    background-color: red;
-    width: 550px;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  .bg-image {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    position: relative;
+    top:0;
+    left:0;
+    z-index:-1;
+    filter: brightness(0.6);
+  }  
+
+  .home-content {
+    padding-top: 100px;
+    text-align: center;
   }
 
-  .diagnol {
-    position: absolute;
-    top: 81px; 
-    left: 548px;
-    height: 5.5px;
-    background-color: red;
-    width: 300px;
-    transform: rotate(-20deg);
-    transform-origin: left;
+  .navbar-scrolled {
+    background-color: black;
+    box-shadow: 0 1px 10px rgba(0, 0,0,0.15);
   }
 
-  .top{
-    position: absolute;
-    top: 1px; 
-    left: 765px;
-    height: 6px;
-    background-color: red;
-    width: 550px;
+  .navbar {
+    transition: all 0.5s;
+  }
+
+  .container {
+    overflow-x: hidden;
   }
