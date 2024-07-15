@@ -14,5 +14,10 @@ def predict():
 def fantasy():
     return "Hello starting the fantasy prediction"
 
+@bp.route("/signup")
+def fantasy():
+    return "Hello starting the sign up page"
+
+
 if __name__ == "__main__":
     bp.run(debug=True)
