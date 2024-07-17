@@ -7,7 +7,8 @@
 # # I like the idea of logging in and signing up and tracking your own predictions and points over the season
 # # I also like the idea of real time gp updates
 # # I also like the idea of incorporating F1 stream compatability
-# # Optimize 
+# # Optimize fantasy pics to make more use of the budget more price = more valuable
+# # Make it so that the fantasy prices are pulled from the website so the user doesnt enter them
 
 import pandas as pd
 import numpy as np
@@ -171,7 +172,7 @@ def predictTop20(best_model, label_encoder, new_data, original_drivers, original
 
 def main():
     
-    race_name = 'italian_grand_prix'
+    race_name = 'austrian_grand_prix'
     allowed_drivers = [
         '#1 Max Verstappen', '#4 Lando Norris', '#16 Charles Leclerc', 
         '#55 Carlos Sainz Jr.', '#11 Sergio Pérez', '#81 Oscar Piastri', 
@@ -198,7 +199,9 @@ def main():
 
     new_data = pd.concat([new_data, dummy_df], axis=1)
 
-    predictTop20(model, label_encoder, new_data, drivers, constructors, allowed_drivers)
+    result_data = predictTop20(model, label_encoder, new_data, drivers, constructors, allowed_drivers)
+    return result_data[['Driver', 'Constructor', 'Grid', 'Laps', 'Points', 'Predicted_Position']].to_dict(orient='records')
+
 
 if __name__ == "__main__":
     main()

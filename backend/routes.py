@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify
+from .prediction import main
+from .fantasy import main as mainFantasy
 
 bp = Blueprint('main', __name__)
 
@@ -8,14 +10,16 @@ def home():
 
 @bp.route("/predict")
 def predict():
-    return {"message": "Hello starting the prediction"}
+    podiumPrediction = main()
+    return jsonify(podiumPrediction)
 
 @bp.route("/fantasy")
 def fantasy():
-    return "Hello starting the fantasy prediction"
+    fantasyPredictions = mainFantasy() 
+    return jsonify(fantasyPredictions)
 
 @bp.route("/signup")
-def fantasy():
+def signup():
     return "Hello starting the sign up page"
 
 

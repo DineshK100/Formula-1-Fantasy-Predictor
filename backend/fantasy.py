@@ -1,5 +1,5 @@
 import pandas as pd
-from prediction import loadDataBaseData, selectFeatures, calculateSampleWeights, trainModel
+from .prediction import loadDataBaseData, selectFeatures, calculateSampleWeights, trainModel
 
 def simulate_event(data, event_name):
     data = data.copy()
@@ -126,12 +126,16 @@ def main():
         drivers_data['Constructor_' + constructor] = (drivers_data['Constructor'] == constructor).astype(int)
 
     top_5_drivers, top_2_constructors = optimize_team(drivers_data, budget, driver_prices, constructor_prices)
+    
 
     print("Top 5 Drivers to Select:")
     print(pd.DataFrame(top_5_drivers, columns=['Driver', 'Price', 'Fantasy_Points']))
 
     print("\nTop 2 Constructors to Select:")
     print(pd.DataFrame(top_2_constructors, columns=['Constructor', 'Price', 'Fantasy_Points']))
+
+    final_list = top_5_drivers + top_2_constructors
+    return final_list
 
 if __name__ == "__main__":
     main()

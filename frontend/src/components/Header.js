@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from "react";
-import "./Header.css"; // Assuming you have custom styles
+// Make it so that there is no bounceback when you scroll up
+// Fix overflow issue
+
+import React, { useEffect } from "react";
+import "./Header.css";
 
 const Header = () => {
   useEffect(() => {
@@ -17,52 +20,66 @@ const Header = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  
+
   return (
     <>
-      <img className="bg-image" src="bg.jpg" alt="Background" />
-        <nav class="navbar navbar-expand-sm navbar-dark fixed-top">
-          <div className="container">
-            <a class="navbar-brand" href="/">
+      <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div className="container">
+          <div className="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            
+            <ul className="navbar-nav me-auto custom-padding">
+              <li className="nav-item">
+                <a className="nav-link" href="/">
+                  Live Results
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="/fantasy">
+                  Fantasy
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link" href="/predict">
+                  Predict
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div className="mx-auto order-0">
+            <a className="navbar-brand mx-auto formula" href="/">
               GridMaster
             </a>
             <button
-              class="navbar-toggler"
+              className="navbar-toggler"
               type="button"
               data-toggle="collapse"
-              data-target="#navbarNav"
-              aria-controls="navbarNav"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
+              data-target=".dual-collapse2"
             >
-              <span class="navbar-toggler-icon"></span>
+              <span className="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav">
-                <li class="nav-item active">
-                  <a class="nav-link" href="/">
-                    Stats
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/fantasy">
-                    Fantasy
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/predict">
-                    Predict
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/signup">
-                    Sign Up
-                  </a>
-                </li>
-              </ul>
-            </div>
           </div>
-        </nav>
+          <div className="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul className="navbar-nav ms-auto custom-padding">
+              <li className="nav-item">
+                <a className="nav-link" href="/statistics">
+                  Statistics
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="/stream">
+                  Stream
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="/signup">
+                  Sign Up
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     </>
   );
 };
