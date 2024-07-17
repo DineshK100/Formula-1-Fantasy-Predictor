@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Loader from "./components/Loading";
-import './Predict.css'
+import "./Predict.css";
 
 function Predict() {
   const [data, setData] = useState({});
@@ -16,11 +16,11 @@ function Predict() {
   }, []);
 
   const getDriverImage = (driverName) => {
-
     driverName = driverName.replace("ü", "u");
     driverName = driverName.replace("é", "e");
 
-    const fileName = driverName.toLowerCase().replace(/[^a-z]/g, "", '') + ".avif";
+    const fileName =
+      driverName.toLowerCase().replace(/[^a-z]/g, "", "") + ".avif";
     return `./drivers/${fileName}`;
   };
 
@@ -41,13 +41,20 @@ function Predict() {
               <tr key={index}>
                 <td>{item.Predicted_Position}</td>
 
-                <td>
-                  <img
-                    src={getDriverImage(item.Driver)}
-                    alt={item.Driver}
-                    className="driver-image"
-                  ></img>
-                </td>
+                {index < 3 ? (
+                  <td>
+                    <img
+                      src={getDriverImage(item.Driver)}
+                      alt={item.Driver}
+                      className="driver-image"
+                      draggable='false'
+                    ></img>
+                    <td>{item.Driver}</td>
+                  </td>
+                ) : (
+                  <td>{item.Driver}</td>
+                )}
+
                 <td>{item.Constructor}</td>
               </tr>
             ))}
