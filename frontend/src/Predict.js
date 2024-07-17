@@ -4,14 +4,13 @@ import './Predict.css'
 
 function Predict() {
   const [data, setData] = useState({});
-  const [loading, setLoading] = useState({});
 
   useEffect(() => {
     fetch("/predict")
       .then((res) => res.json())
       .then((data) => {
         setData(data);
-        setLoading(false);
+
         console.log(data);
       });
   }, []);
@@ -45,7 +44,7 @@ function Predict() {
                 <td>
                   <img
                     src={getDriverImage(item.Driver)}
-                    //alt={item.Driver}
+                    alt={item.Driver}
                     className="driver-image"
                   ></img>
                 </td>
