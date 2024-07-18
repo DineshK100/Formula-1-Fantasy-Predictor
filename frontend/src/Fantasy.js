@@ -16,9 +16,15 @@ function Fantasy() {
   return (
     <div>
       <h1>Fantasy page</h1>
-      <p>This is the Fantasy page</p>
+      <p>This is the Fantasy page</p> 
 
       
+
+
+
+
+
+
     </div>
   );
 }
