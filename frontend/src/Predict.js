@@ -20,7 +20,7 @@ function Predict() {
           setData(data);
           console.log(data);
         })
-        .catch((error) => console.error("Error fetching predictions:", error))
+        .catch((error) => console.error("Error fetching predictions:", error));
     }
   }, [selectedRace]);
 
@@ -35,15 +35,21 @@ function Predict() {
     <div>
       <h1>Prediction page</h1>
 
-      <form method = "post" action = "#">
-      <select
-        id = "race"
-        onChange={(e) => setSelectedRace(e.target.value)}
-      >
-        <option value="" disabled = "disabled" >Select a race</option>
-        <option value="british_grand_prix">British Grand Prix</option>
-        <option value="austrian_grand_prix">Austrian Grand Prix</option>
-      </select>
+      <form action="#" method="post" >
+        <select name = "race" id="race" onChange={(e) => setSelectedRace(e.target.value)}>
+          <option value="" disabled="disabled">
+            Select a race
+          </option>
+          <option value="british_grand_prix">British Grand Prix</option>
+          <option value="austrian_grand_prix">Austrian Grand Prix</option>
+          <option value="australian_grand_prix">British Grand Prix</option>
+          <option value="hungary_grand_prix">Austrian Grand Prix</option>
+          <option value="bahrain_grand_prix">British Grand Prix</option>
+          <option value="saudi_arabian_grand_prix">Austrian Grand Prix</option>
+          <option value="british_grand_prix">British Grand Prix</option>
+          <option value="austrian_grand_prix">Austrian Grand Prix</option>
+
+        </select>
       </form>
 
       {data.length ? (

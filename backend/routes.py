@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+import requests
 from .prediction import main
 from .fantasy import main as mainFantasy
 
@@ -10,8 +11,8 @@ def home():
 
 @bp.route("/predict", methods = ['POST', 'GET'])
 def predict():
-    race = request.form["race"]
-    podiumPrediction = main(race)
+    race = request.get_json(force = "true")
+    podiumPrediction = main(race["race"])
     return jsonify(podiumPrediction)
 
 @bp.route("/fantasy")
@@ -22,7 +23,6 @@ def fantasy():
 @bp.route("/signup")
 def signup():
     return "Hello starting the sign up page"
-
 
 if __name__ == "__main__":
     bp.run(debug=True)
