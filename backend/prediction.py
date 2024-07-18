@@ -9,6 +9,11 @@
 # # I also like the idea of incorporating F1 stream compatability
 # # Optimize fantasy pics to make more use of the budget more price = more valuable
 # # Make it so that the fantasy prices are pulled from the website so the user doesnt enter them
+# # Find more features like talent, quality of car etc, length of track/time taken to cover it. 
+# # Overall Season Rating
+# # CV should equal lenght of dataframe/# of racers
+# # Maybe instead of getting rid of the DNF give them 20
+## Get rid of redundancy if I can
 
 import pandas as pd
 import numpy as np
@@ -21,10 +26,12 @@ import xgboost as xgb
 from math import ceil
 
 def loadDataBaseData(raceName):
+
     client = MongoClient(
         'mongodb+srv://dineshrkarnati:Collegeadmissio@formulafantasy.v9quue6.mongodb.net/?retryWrites=true&w=majority',
         tlsCAFile=certifi.where()
     )
+
     db = client['formula']
     collection = db[raceName]
 
@@ -91,10 +98,10 @@ def trainModel(X, y, sample_weights):
     X['Grid'] *= 5 # Emphasize the grid positions
 
     X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(
-        X, y_encoded, sample_weights, test_size=0.1, random_state=42
+        X, y_encoded, sample_weights, test_size=0.1, random_state=100
     )
 
-    model = xgb.XGBClassifier(random_state=42)
+    model = xgb.XGBClassifier(random_state=100)
 
     param_grid = {
         'n_estimators': [100],
@@ -170,9 +177,9 @@ def predictTop20(best_model, label_encoder, new_data, original_drivers, original
     print(new_data[['Driver', 'Constructor', 'Grid', 'Laps', 'Points', 'Predicted_Position']])
     return new_data
 
-def main():
+def main(race):
     
-    race_name = 'austrian_grand_prix'
+    race_name = race
     allowed_drivers = [
         '#1 Max Verstappen', '#4 Lando Norris', '#16 Charles Leclerc', 
         '#55 Carlos Sainz Jr.', '#11 Sergio Pérez', '#81 Oscar Piastri', 
@@ -201,7 +208,3 @@ def main():
 
     result_data = predictTop20(model, label_encoder, new_data, drivers, constructors, allowed_drivers)
     return result_data[['Driver', 'Constructor', 'Grid', 'Laps', 'Points', 'Predicted_Position']].to_dict(orient='records')
-
-
-if __name__ == "__main__":
-    main()
