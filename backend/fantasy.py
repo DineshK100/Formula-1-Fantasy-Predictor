@@ -78,6 +78,7 @@ def optimize_team(drivers_data, budget, driver_prices, constructor_prices):
     selected_drivers = [item for item in selected_items if item[0] in driver_prices]
     selected_constructors = [item for item in selected_items if item[0] in constructor_prices]
 
+
     return selected_drivers, selected_constructors
 
 def main():
@@ -123,19 +124,22 @@ def main():
     drivers_data = data[['Driver', 'Grid', 'Pos.', 'Constructor', 'Laps', 'Year', 'Points']]
 
     for constructor in constructor_prices.keys():
-        drivers_data['Constructor_' + constructor] = (drivers_data['Constructor'] == constructor).astype(int)
+        drivers_data.loc[:, 'Constructor_' + constructor] = (drivers_data['Constructor'] == constructor).astype(int)
+
+    integer_columns = drivers_data.select_dtypes(include=['int64']).columns
+    for col in integer_columns:
+        drivers_data[col] = drivers_data[col].astype(int)
 
     top_5_drivers, top_2_constructors = optimize_team(drivers_data, budget, driver_prices, constructor_prices)
     
-
-    print("Top 5 Drivers to Select:")
     print(pd.DataFrame(top_5_drivers, columns=['Driver', 'Price', 'Fantasy_Points']))
 
-    print("\nTop 2 Constructors to Select:")
     print(pd.DataFrame(top_2_constructors, columns=['Constructor', 'Price', 'Fantasy_Points']))
 
-    final_list = top_5_drivers + top_2_constructors
-    return final_list
+    final_list = {
+        "drivers": [(driver, int(price), int(points)) for driver, price, points in top_5_drivers],
+        "constructors": [( constructor, int(price), int(points)) for constructor, price, points in top_2_constructors]
+    }
 
-if __name__ == "__main__":
-    main()
+
+    return final_list

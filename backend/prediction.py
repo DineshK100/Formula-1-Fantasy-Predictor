@@ -13,7 +13,7 @@
 # # Overall Season Rating
 # # CV should equal lenght of dataframe/# of racers
 # # Maybe instead of getting rid of the DNF give them 20
-## Get rid of redundancy if I can
+## Get rid of redundancy if 
 
 import pandas as pd
 import numpy as np
@@ -95,13 +95,17 @@ def trainModel(X, y, sample_weights):
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
 
-    X['Grid'] *= 5 # Emphasize the grid positions
+    # Debugging: Check unique values in y before and after encoding
+    print("Unique values in y before encoding:", y.unique())
+    print("Unique values in y after encoding:", np.unique(y_encoded))
+
+    X['Grid'] *= 5  # Emphasize the grid positions
 
     X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(
-        X, y_encoded, sample_weights, test_size=0.1, random_state=100
+        X, y_encoded, sample_weights, test_size=0.1, random_state=42
     )
 
-    model = xgb.XGBClassifier(random_state=100)
+    model = xgb.XGBClassifier(random_state=42)
 
     param_grid = {
         'n_estimators': [100],
@@ -121,6 +125,7 @@ def trainModel(X, y, sample_weights):
     print("Accuracy of XGBoost Model:", accuracy)
 
     return best_model, label_encoder
+
 
 def predictTop20(best_model, label_encoder, new_data, original_drivers, original_constructors, allowed_drivers):
     new_predictions = best_model.predict(new_data)
@@ -193,6 +198,10 @@ def main(race):
     data, drivers, constructors = loadDataBaseData(race_name)
     sample_weights = calculateSampleWeights(data)
     X, y = selectFeatures(data)
+
+    print("Unique values in y:", y.unique())
+
+
     model, label_encoder = trainModel(X, y, sample_weights)
 
     new_data = pd.DataFrame({
