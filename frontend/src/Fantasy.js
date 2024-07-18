@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Loader from "./components/Loading";
 
+// Fix the fantasy thing, looks like its giving some constructors unreasonable points
+
+
 function Fantasy() {
   const [data, setData] = useState({});
   const [selectedRace, setSelectedRace] = useState("");
@@ -35,9 +38,7 @@ function Fantasy() {
       constructorName.toLowerCase().replace(/[^a-z]/g, "") + ".avif";
     return `./constructors/${fileName}`;
   };
-  // Yuki : AlphaTauri
-  // Bottas : Alfa Romeo
-  //
+
   return (
     <div>
       <h1>Fantasy page</h1>
