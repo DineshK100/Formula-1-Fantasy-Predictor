@@ -17,9 +17,8 @@ def predict():
 
 @bp.route("/fantasy", methods = ['POST', 'GET'])
 def fantasy():
-    fantasyPredictions = mainFantasy()
-    # fantasyPredictions['drivers'] = [(driver, int(price), int(points)) for driver, price, points in fantasyPredictions['drivers']]
-    # fantasyPredictions['constructors'] = [(constructor, int(price), int(points)) for constructor, price, points in fantasyPredictions['constructors']]
+    race = request.get_json(force = "true")
+    fantasyPredictions = mainFantasy(race["race"])
     return jsonify(fantasyPredictions)
 
 @bp.route("/signup")

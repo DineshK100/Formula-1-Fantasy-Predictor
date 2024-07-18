@@ -81,8 +81,8 @@ def optimize_team(drivers_data, budget, driver_prices, constructor_prices):
 
     return selected_drivers, selected_constructors
 
-def main():
-    race_name = 'spanish_grand_prix'
+def main(race):
+    race_name = race
     budget = 100
     
     driver_prices = {
