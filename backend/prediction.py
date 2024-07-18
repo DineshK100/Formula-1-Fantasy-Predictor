@@ -170,9 +170,9 @@ def predictTop20(best_model, label_encoder, new_data, original_drivers, original
     print(new_data[['Driver', 'Constructor', 'Grid', 'Laps', 'Points', 'Predicted_Position']])
     return new_data
 
-def main():
+def main(race):
     
-    race_name = 'austrian_grand_prix'
+    race_name = race
     allowed_drivers = [
         '#1 Max Verstappen', '#4 Lando Norris', '#16 Charles Leclerc', 
         '#55 Carlos Sainz Jr.', '#11 Sergio Pérez', '#81 Oscar Piastri', 
