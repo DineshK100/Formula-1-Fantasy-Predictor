@@ -1,10 +1,11 @@
-// Make it so that there is no bounceback when you scroll up
-// Fix overflow issue
-
 import React, { useEffect } from "react";
 import "./Header.css";
+import { useAuth } from "../Auth";  // Ensure the correct import path
 
 const Header = () => {
+  const { isAuthenticated, logout } = useAuth();
+  console.log(isAuthenticated);
+
   useEffect(() => {
     const handleScroll = () => {
       const navEl = document.querySelector(".navbar");
@@ -26,19 +27,12 @@ const Header = () => {
       <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
         <div className="container">
           <div className="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-            
             <ul className="navbar-nav me-auto custom-padding">
-              <li className="nav-item">
-                <a className="nav-link" href="/">
-                  Live Results
-                </a>
-              </li>
               <li className="nav-item">
                 <a className="nav-link" href="/fantasy">
                   Fantasy
                 </a>
               </li>
-
               <li className="nav-item">
                 <a className="nav-link" href="/predict">
                   Predict
@@ -66,16 +60,19 @@ const Header = () => {
                   Statistics
                 </a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/stream">
-                  Stream
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/signup">
-                  Sign Up
-                </a>
-              </li>
+              {isAuthenticated ? (
+                <li className="nav-item">
+                  <a className="nav-link">
+                    Profile
+                  </a>
+                </li>
+              ) : (
+                <li className="nav-item">
+                  <a className="nav-link" href="/signup">
+                    Sign Up
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
