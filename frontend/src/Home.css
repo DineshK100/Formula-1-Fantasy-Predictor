@@ -35,7 +35,7 @@
   h1 {
     font-size: 6.2rem;
     color: white;
-    margin-top: 310px;
+    margin-top: 350px;
   }
 
   p {
@@ -86,7 +86,7 @@
     overflow:hidden;
     display: flex;
     flex-direction: column;
-    margin-top: 370px;;
+    margin-top: 450px;;
     color: black;
   }
 

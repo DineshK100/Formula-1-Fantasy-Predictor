@@ -55,5 +55,9 @@ def signup():
 
     return jsonify({'token': token, "success": True})
 
+@bp.route("/statistics", methods=['POST'])
+def statistics():
+    return "Stats Page"
+
 if __name__ == "__main__":
     bp.run(debug=True)
