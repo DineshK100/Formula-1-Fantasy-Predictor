@@ -3,7 +3,6 @@ import Loader from "./components/Loading";
 
 // Fix the fantasy thing, looks like its giving some constructors unreasonable points
 
-
 function Fantasy() {
   const [data, setData] = useState({});
   const [selectedRace, setSelectedRace] = useState("");
@@ -116,8 +115,7 @@ function Fantasy() {
                 draggable="false"
               ></img>
               <p>
-                {constructors[0]}, Price: {constructors[1]}, Extimated Points:{" "}
-                {constructors[2]}
+                {constructors[0]}, Price: {constructors[1]}
               </p>
             </div>
           ))}

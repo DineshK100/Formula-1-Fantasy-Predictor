@@ -13,7 +13,7 @@
 # # Overall Season Rating
 # # CV should equal lenght of dataframe/# of racers
 # # Maybe instead of getting rid of the DNF give them 20
-## Get rid of redundancy if 
+# # Get rid of redundancy if 
 
 import pandas as pd
 import numpy as np

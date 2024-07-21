@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 import "./Header.css";
 import { useAuth } from "../Auth";  // Ensure the correct import path
 
+// I like the idea of putting the design things to the header elements as well
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth();
-  console.log(isAuthenticated);
+  const { isAuthenticated, username, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,7 +26,7 @@ const Header = () => {
     <>
       <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
         <div className="container">
-          <div className="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+          <div className="left-div navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
             <ul className="navbar-nav me-auto custom-padding">
               <li className="nav-item">
                 <a className="nav-link" href="/fantasy">
@@ -53,7 +53,7 @@ const Header = () => {
               <span className="navbar-toggler-icon"></span>
             </button>
           </div>
-          <div className="navbar-collapse collapse w-100 order-3 dual-collapse2">
+          <div className="right-div navbar-collapse collapse w-100 order-3 dual-collapse2">
             <ul className="navbar-nav ms-auto custom-padding">
               <li className="nav-item">
                 <a className="nav-link" href="/statistics">
@@ -61,15 +61,19 @@ const Header = () => {
                 </a>
               </li>
               {isAuthenticated ? (
-                <li className="nav-item">
+                <li className="nav-item dropdown">
                   <a className="nav-link">
-                    Profile
+                    Hello, {username}
                   </a>
+                  <div class = "dropdown-content">
+                    <a onClick={logout}>Sign Out</a>
+                  </div>
+
                 </li>
               ) : (
                 <li className="nav-item">
                   <a className="nav-link" href="/signup">
-                    Sign Up
+                    Login
                   </a>
                 </li>
               )}
