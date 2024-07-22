@@ -1,9 +1,167 @@
-.spinning{
-    align-items: center;
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  max-width: 100%;
+  background-color: black;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+hr {
+  color: white;
+  width: 300px;
+  margin-left: 20px;
+}
+
+.race-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  margin: 20px;
+  margin-top: 70px;
+  align-items: center;
+  justify-content: center;
+  padding-left: 200px;
+  padding-right: 200px;
+  flex-wrap: wrap;
+}
+
+.race-card {
+  opacity: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: 2px solid white;
+  border-style: solid solid none none;
+}
+
+.race-card:hover {
+  transform: scale(1.05);
+}
+
+.race-info {
+  margin-left: 10px;
+}
+
+.track-image {
+  width: 100%;
+  border-radius: 0 0 10px 10px;
+}
+
+.race-info {
+  color: white;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+}
+
+.race-body {
+  color: white;
+}
+
+.race-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  color: red;
+}
+
+.race-name {
+  color: white; 
+}
+
+header {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.main-text {
+  font-size: 4rem;
+  color: white;
+  margin-top: 100px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.predictions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.select-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.backboard {
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  width: 200px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.backboard:hover {
+  transform: translateY(-10px);
 }
 
 .driver-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-  }
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.backboard-content {
+  padding: 20px;
+}
+
+.backboard-content h2 {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  color: black;
+}
+
+.backboard-content p {
+  margin: 5px 0;
+  color: #777;
+}

@@ -61,6 +61,15 @@
     z-index: -5;
   }
 
+  .backgrounds-container::after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%; /* Adjust the height of the fade effect */
+    background: linear-gradient(to bottom, transparent, black);
+  }
+
   .background{
     position: absolute;
     width: 100%;

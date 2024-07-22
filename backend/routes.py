@@ -59,5 +59,9 @@ def signup():
 def statistics():
     return "Stats Page"
 
+@bp.route("/login", methods=['POST'])
+def statistics():
+    return "Login Page"
+
 if __name__ == "__main__":
     bp.run(debug=True)
