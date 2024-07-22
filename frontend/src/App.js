@@ -20,7 +20,7 @@ function App() {
           <Route path="/predict" element={<Predict />} />
           <Route path="/fantasy" element={<Fantasy />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/statistics" element={<Statistics />} />
+          {/* <Route path="/statistics" element={<Statistics />} /> */}
         </Routes>
         
       </div>
