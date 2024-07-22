@@ -68,7 +68,6 @@ const Header = () => {
                   <div class = "dropdown-content">
                     <a onClick={logout}>Sign Out</a>
                   </div>
-
                 </li>
               ) : (
                 <li className="nav-item">

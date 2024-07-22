@@ -2,11 +2,143 @@ import React, { useEffect, useState } from "react";
 import Loader from "./components/Loading";
 import "./Predict.css";
 
-// Make it so that when the thing is clicked again the old table dissapears and the loading comes
-// Make it so the loading doesnt show from the first
+// Make it look like the formula 1 selector grid
+// Then when one is selected the Loading icon shows up and then animation to show the positions
+// Have two view options
+// covert to json
+
+const races = [
+  {
+    id: "bahrain_grand_prix",
+    name: "Bahrain Grand Prix",
+    country: "Bahrain",
+    image: "./tracks/bahrain.png",
+  },
+  {
+    id: "saudi arabian_grand_prix",
+    name: "Saudi Arabian Grand Prix",
+    country: "Saudi Arabia",
+    image: "./tracks/saudi.png",
+  },
+  {
+    id: "australian_grand_prix",
+    name: "Australia Grand Prix",
+    country: "Australia",
+    image: "./tracks/australia.png",
+  },
+  {
+    id: "japanese_grand_prix",
+    name: "Japanese Grand Prix",
+    country: "Japan",
+    image: "./tracks/japan.png",
+  },
+  {
+    id: "chinese_grand_prix",
+    name: "Chinese Grand Prix",
+    country: "Japan",
+    image: "./tracks/china.png",
+  },
+  {
+    id: "miami_grand_prix",
+    name: "Miami Grand Prix",
+    country: "United States",
+    image: "./tracks/miami.png",
+  },
+  {
+    id: "emilia romagna_grand_prix",
+    name: "Emilia-Romagna Grand Prix",
+    country: "Spain",
+    image: "./tracks/emilia.png",
+  },
+
+  {
+    id: "monaco_grand_prix",
+    name: "Monaco Grand Prix",
+    country: "Monaco",
+    image: "./tracks/monaco.png",
+  },
+  {
+    id: "canadian_grand_prix",
+    name: "Canadian Grand Prix",
+    country: "Canada",
+    image: "./tracks/canada.png",
+  },
+  {
+    id: "spanish_grand_prix",
+    name: "Spanish Grand Prix",
+    country: "Spain",
+    image: "./tracks/spain.png",
+  },
+  {
+    id: "austrian_grand_prix",
+    name: "Austrian Grand Prix",
+    country: "Austria",
+    image: "./tracks/austria.png",
+  },
+  {
+    id: "british_grand_prix",
+    name: "British Grand Prix",
+    country: "United Kingdon",
+    image: "./tracks/british.png",
+  },
+  {
+    id: "belgian_grand_prix",
+    name: "Belgian Grand Prix",
+    country: "Beligum",
+    image: "./tracks/belgium.avif",
+  },
+  {
+    id: "dutch_grand_prix",
+    name: "Dutch Grand Prix",
+    country: "Netherlands",
+    image: "./tracks/dutch.avif",
+  },
+  {
+    id: "italian_grand_prix",
+    name: "Italian Grand Prix",
+    country: "Italian",
+    image: "./tracks/italy.avif",
+  },
+  {
+    id: "azerbaijan_grand_prix",
+    name: "Azerbaijan Grand Prix",
+    country: "Azerbaijan",
+    image: "./tracks/azerbaijan.avif",
+  },
+  {
+    id: "united states_grand_prix",
+    name: "United States Grand Prix",
+    country: "United States",
+    image: "./tracks/usa.avif",
+  },
+  {
+    id: "brazilian_grand_prix",
+    name: "Brazilian Grand Prix",
+    country: "Brazil",
+    image: "./tracks/brazil.avif",
+  },
+  {
+    id: "las_vegas_grand_prix",
+    name: "Las Vegas Grand Prix",
+    country: "United States",
+    image: "./tracks/vegas.avif",
+  },
+  {
+    id: "qatar_grand_prix",
+    name: "Qatar Grand Prix",
+    country: "Qatar",
+    image: "./tracks/qatar.avif",
+  },
+  {
+    id: "abu_dhabi_grand_prix",
+    name: "Abu Dhabi Grand Prix",
+    country: "Abu Dhabi",
+    image: "./tracks/abudhabi.avif",
+  },
+];
 
 function Predict() {
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const [selectedRace, setSelectedRace] = useState("");
 
   useEffect(() => {
@@ -36,85 +168,53 @@ function Predict() {
 
   return (
     <div>
-      <h1>Prediction page</h1>
+      <div className="top">
+        <h1 className="main-text">Driver Predictions</h1>
+        <p className="sub-text">Select a race to predict</p>
+      </div>
 
-      <form action="#" method="post">
-        <select
-          name="race"
-          id="race"
-          onChange={(e) => setSelectedRace(e.target.value)}
-          defaultValue=""
-        >
-          <option value="" disabled="disabled">
-            Select a race
-          </option>
-          <option value="bahrain_grand_prix">Bahrain Grand Prix</option>
-          <option value="saudi arabian_grand_prix">
-            Saudi Arabian Grand Prix
-          </option>
-          <option value="australian_grand_prix">Australian Grand Prix</option>
-          <option value="japanese_grand_prix">Japanese Grand Prix</option>
-          <option value="chinese_grand_prix">Chinese Grand Prix</option>
-          <option value="miami_grand_prix">Miami Grand Prix</option>
-          <option value="emilia romagna_grand_prix">
-            Emilia-Romagna Grand Prix
-          </option>
-          <option value="monaco_grand_prix">Monaco Grand Prix</option>
-          <option value="canadian_grand_prix">Canadian Grand Prix</option>
-          <option value="spanish_grand_prix">Spanish Grand Prix</option>
-          <option value="austrian_grand_prix">Austrian Grand Prix</option>
-          <option value="british_grand_prix">British Grand Prix</option>
-          <option value="belgian_grand_prix">Belgian Grand Prix</option>
-          <option value="dutch_grand_prix">Dutch Grand Prix</option>
-          <option value="italian_grand_prix">Italian Grand Prix</option>
-          <option value="azerbaijan_grand_prix">Azerbaijan Grand Prix</option>
-          {/* <option value="saudi_arabian_grand_prix">Singapore Grand Prix</option> */}
-          <option value="united states_grand_prix">
-            United States Grand Prix
-          </option>
-          {/* <option value="mexican_grand_prix">Mexican Grand Prix</option> */}
-          <option value="brazilian_grand_prix">Brazilian Grand Prix</option>
-          <option value="las vegas_grand_prix">Las Vegas Grand Prix</option>
-          <option value="qatar_grand_prix">Qatar Grand Prix</option>
-          <option value="abu dhabi_grand_prix">Abu Dhabi Grand Prix</option>
-        </select>
-      </form>
+      <div className="race-grid">
+        {races.map((race) => (
+          <div
+            key={race.id}
+            className={`race-card`}
+            onClick={() => setSelectedRace(race.id)}
+          >
+            <div className="race-header">
+              <span className="country">{race.country}</span>
+            </div>
+            <hr />
+            <div className="race-body">
+              <div className="race-info">
+                <p className="race-name">{race.name}</p>
+              </div>
+              <hr />
+              <img src={race.image} alt={race.name} className="track-image" />
+            </div>
+          </div>
+        ))}
+      </div>
 
       {data.length ? (
-        <table className="podium table">
-          <thead>
-            <tr>
-              <th>Position</th>
-              <th>Driver</th>
-              <th>Constructor</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, index) => (
-              <tr key={index}>
-                <td>{item.Predicted_Position}</td>
-
-                {index < 3 ? (
-                  <td>
-                    <img
-                      src={getDriverImage(item.Driver)}
-                      alt={item.Driver}
-                      className="driver-image"
-                      draggable="false"
-                    ></img>
-                    <td>{item.Driver}</td>
-                  </td>
-                ) : (
-                  <td>{item.Driver}</td>
-                )}
-
-                <td>{item.Constructor}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="predictions">
+          {data.map((item, index) => (
+            <div className="backboard" key={index}>
+              <img
+                src={getDriverImage(item.Driver)}
+                alt={item.Driver}
+                className="driver-image"
+                draggable="false"
+              />
+              <div className="backboard-content">
+                <h2>{item.Driver}</h2>
+                <p>{item.Constructor}</p>
+                <p>Position: {item.Predicted_Position}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
-        <Loader className="spinning" />
+        <></>
       )}
     </div>
   );
