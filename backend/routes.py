@@ -55,9 +55,9 @@ def signup():
 
     return jsonify({'token': token, "success": True})
 
-@bp.route("/statistics", methods=['POST'])
-def statistics():
-    return "Stats Page"
+# @bp.route("/statistics", methods=['POST'])
+# def statistics():
+#     return "Stats Page"
 
 @bp.route("/login", methods=['POST'])
 def statistics():

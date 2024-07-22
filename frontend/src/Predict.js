@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Sidebar from "./components/Sidebar";
 import Loader from "./components/Loading";
 import "./Predict.css";
 
@@ -50,7 +51,6 @@ const races = [
     country: "Spain",
     image: "./tracks/emilia.png",
   },
-
   {
     id: "monaco_grand_prix",
     name: "Monaco Grand Prix",
@@ -138,11 +138,17 @@ const races = [
 ];
 
 function Predict() {
+  const [toggle, setIsToggle] = useState(false);
   const [data, setData] = useState([]);
   const [selectedRace, setSelectedRace] = useState("");
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     if (selectedRace !== "") {
+      setShouldLoad(true);
+      setHasError(false);
+      
       fetch("/predict", {
         method: "POST",
         body: JSON.stringify({ race: selectedRace }),
@@ -150,12 +156,22 @@ function Predict() {
           "Content-Type": "application/json",
         },
       })
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return res.json();
+        })
         .then((data) => {
           setData(data);
-          console.log(data);
+          setShouldLoad(false);
         })
-        .catch((error) => console.error("Error fetching predictions:", error));
+        .catch((error) => {
+          console.error("Error fetching predictions:", error);
+          setShouldLoad(false);
+          setHasError(true);
+          alert("Error loading this prediction, try another one!");
+        });
     }
   }, [selectedRace]);
 
@@ -166,6 +182,14 @@ function Predict() {
     return `./drivers/${fileName}`;
   };
 
+  const handleRaceSelect = (raceId) => {
+    setData([]); 
+    setSelectedRace(raceId);
+    setIsToggle(true);
+    setShouldLoad(true);
+    setHasError(false); // Reset error state on new race selection
+  };
+
   return (
     <div>
       <div className="top">
@@ -173,48 +197,55 @@ function Predict() {
         <p className="sub-text">Select a race to predict</p>
       </div>
 
-      <div className="race-grid">
-        {races.map((race) => (
-          <div
-            key={race.id}
-            className={`race-card`}
-            onClick={() => setSelectedRace(race.id)}
-          >
-            <div className="race-header">
-              <span className="country">{race.country}</span>
-            </div>
-            <hr />
-            <div className="race-body">
-              <div className="race-info">
-                <p className="race-name">{race.name}</p>
+      {(!toggle && !hasError) ? (
+        <div className="race-grid">
+          {races.map((race) => (
+            <div
+              key={race.id}
+              className={`race-card`}
+              onClick={() => handleRaceSelect(race.id)}
+            >
+              <div className="race-header">
+                <span className="country">{race.country}</span>
               </div>
               <hr />
-              <img src={race.image} alt={race.name} className="track-image" />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {data.length ? (
-        <div className="predictions">
-          {data.map((item, index) => (
-            <div className="backboard" key={index}>
-              <img
-                src={getDriverImage(item.Driver)}
-                alt={item.Driver}
-                className="driver-image"
-                draggable="false"
-              />
-              <div className="backboard-content">
-                <h2>{item.Driver}</h2>
-                <p>{item.Constructor}</p>
-                <p>Position: {item.Predicted_Position}</p>
+              <div className="race-body">
+                <div className="race-info">
+                  <p className="race-name">{race.name}</p>
+                </div>
+                <hr />
+                <img src={race.image} alt={race.name} className="track-image" />
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <></>
+        <div className="main-content">
+          <Sidebar onRaceSelect={handleRaceSelect} className="sidebar" />
+          <div className="predictions">
+            {shouldLoad && !hasError && data.length === 0 ? (
+              <Loader />
+            ) : (
+              <div className="predictions-grid">
+                {data.map((item, index) => (
+                  <div className="backboard" key={index}>
+                    <img
+                      src={getDriverImage(item.Driver)}
+                      alt={item.Driver}
+                      className="driver-image"
+                      draggable="false"
+                    />
+                    <div className="backboard-content">
+                      <h2 className="driver-name">{item.Driver}</h2>
+                      <p>{item.Constructor}</p>
+                      <p>Position: {item.Predicted_Position}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
