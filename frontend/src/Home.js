@@ -3,7 +3,16 @@ import "./Home.css";
 
 function Home() {
   const [imageIndex, setImageIndex] = useState(0);
-  const backgrounds = ["./backgrounds/bg.jpg", "./backgrounds/sunset.jpg", "./backgrounds/mclaren.jpg", "./backgrounds/mercedes.jpg", "./backgrounds/ferrari2.jpg", "./backgrounds/ferrari3.jpg", "./backgrounds/williams2.jpg", "./backgrounds/merc2.jpg"];
+  const backgrounds = [
+    "./backgrounds/bg.jpg",
+    "./backgrounds/sunset.jpg",
+    "./backgrounds/mclaren.jpg",
+    "./backgrounds/mercedes.jpg",
+    "./backgrounds/ferrari2.jpg",
+    "./backgrounds/ferrari3.jpg",
+    "./backgrounds/williams2.jpg",
+    "./backgrounds/merc2.jpg",
+  ];
 
   useEffect(() => {
     const changeBackground = () => {
@@ -16,25 +25,25 @@ function Home() {
   }, [backgrounds.length]);
 
   return (
-    <div>
-      <header>
-        
-        <h1>Welcome to GridMaster</h1>
-        <p>Your one pit-stop destination for Formula 1 Predictions</p>
-
-        <div className="backgrounds-container">
+    <div className = "outer">
+      <div className="header-container">
+        <header>
+          <h1>Welcome to GridMaster</h1>
+          <p>Your one pit-stop destination for Formula 1 Predictions</p>
+        </header>
+        <div className="home-container">
           {backgrounds.map((bg, index) => (
             <img
               key={index}
-              className={`background ${index === imageIndex ? "showing" : ""}`}
+              className={`home ${index === imageIndex ? "showing" : ""}`}
               src={bg}
               alt={`Background ${index + 1}`}
             />
           ))}
         </div>
-      </header>
+      </div>
 
-      <div className="extra-content">
+      <div className="home-content">
         <section>
           <h2>About Us</h2>
           <p>

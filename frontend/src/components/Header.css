@@ -5,7 +5,7 @@
 }
 
 .navbar-scrolled {
-  background-color: black;
+  background-color: black !important;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.15);
 }
 
@@ -31,6 +31,9 @@
   padding-left: 60px;
   padding-right: 60px;
 
+}
+.container {
+  z-index: 20000;
 }
 
 .left-div {
