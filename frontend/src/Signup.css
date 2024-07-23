@@ -1,4 +1,3 @@
-/* Signup.css */
 .signup-wrapper {
     height: 100vh;
     display: flex;
@@ -14,7 +13,7 @@
   }
   
   .signup-container {
-    max-width: 600px; /* Adjust width as needed */
+    max-width: 600px;
     width: 100%;
   }
   

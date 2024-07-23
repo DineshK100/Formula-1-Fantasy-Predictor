@@ -6,6 +6,7 @@ import SignUp from "./SignUp";
 import Fantasy from "./Fantasy";
 import Header from "./components/Header";
 import Statistics from "./statistics";
+import Login from "./Login";
 
 function App() {
 
@@ -20,7 +21,8 @@ function App() {
           <Route path="/predict" element={<Predict />} />
           <Route path="/fantasy" element={<Fantasy />} />
           <Route path="/signup" element={<SignUp />} />
-          {/* <Route path="/statistics" element={<Statistics />} /> */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/stats" element={<Statistics />} />
         </Routes>
         
       </div>

@@ -1,16 +1,6 @@
-# # Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2, italian
-# # Maybe scrape qualifying and sprint and free practice data? Or combine all those races together as they are newer
-# # Make the model predict based on the inputted grid instead of the grid data on the database to make the prediction more accurate
-# # Make the accuracy score be calculated after the predicted positions are sorted and ordered
-# # Maybe make it so that the laps are not predicted and that the points are accurate based on the formula 1 rules
-# # Do more data optimization to get rid of data from old constructors as well
-# # I like the idea of logging in and signing up and tracking your own predictions and points over the season
-# # I also like the idea of real time gp updates
-# # I also like the idea of incorporating F1 stream compatability
-# # Optimize fantasy pics to make more use of the budget more price = more valuable
+# # Saudi = 3, Miami = 2 , emilia romagna = 3, dutch = 3, las vegas = 1, qatar = 2, azerbaijan, usa
+# # Optimize fantasy pics to make more use of the budget more price = more valuab
 # # Make it so that the fantasy prices are pulled from the website so the user doesnt enter them
-# # Find more features like talent, quality of car etc, length of track/time taken to cover it. 
-# # Overall Season Rating
 # # CV should equal lenght of dataframe/# of racers
 # # Maybe instead of getting rid of the DNF give them 20
 # # Get rid of redundancy if 
@@ -19,17 +9,16 @@ import pandas as pd
 import numpy as np
 from pymongo import MongoClient
 import certifi
-from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 import xgboost as xgb
 from math import ceil
 
 def loadDataBaseData(raceName):
-
     client = MongoClient(
         'mongodb+srv://dineshrkarnati:Collegeadmissio@formulafantasy.v9quue6.mongodb.net/?retryWrites=true&w=majority',
-        tlsCAFile=certifi.where()
+        tlsCAFile=certifi.where() 
     )
 
     db = client['formula']
@@ -59,7 +48,6 @@ def loadDataBaseData(raceName):
 
     data = pd.get_dummies(data, columns=['Driver', 'Constructor'])
 
-    # Add the original Driver and Constructor columns back to the data
     data['Driver'] = drivers
     data['Constructor'] = constructors
 
@@ -72,34 +60,41 @@ def selectFeatures(data):
     features = ['Grid', 'Laps', 'Points', 'Grid_Laps', 'Grid_Points'] + [col for col in data.columns if 'Driver_' in col or 'Constructor_' in col]
     X = data[features]
     y = data['Pos.']
+    
+    unique_positions = np.unique(y)
+    for pos in range(1, 21):
+        if pos not in unique_positions:
+            X = X.append(pd.Series(), ignore_index=True)
+            y = y.append(pd.Series(pos), ignore_index=True)
+    
     return X, y
+
+def handle_rare_classes(y):
+    counts = y.value_counts()
+    rare_classes = counts[counts < 2].index
+    for rare_class in rare_classes:
+        y = y.replace(rare_class, rare_class - 1)
+    return y
 
 def calculateSampleWeights(data):
     current_year = data['Year'].max()
     
-    # Base weight based on recency
     data['Weight'] = 1 / (current_year - data['Year'] + 1)
-    
-    # Additional weight for recent years
     data['Year_Weight'] = data['Year'].apply(lambda x: 1.5 if current_year - x <= 2 else 1)
-    
-    # Additional weight for grid positions
     data['Grid_Weight'] = data['Grid'].apply(lambda x: 2 if x <= 5 else 1.5)
-    
-    # Combine the weights
     data['Weight'] *= data['Year_Weight'] * data['Grid_Weight']
     
     return data['Weight']
 
 def trainModel(X, y, sample_weights):
+    y = handle_rare_classes(y)
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
 
-    # Debugging: Check unique values in y before and after encoding
     print("Unique values in y before encoding:", y.unique())
     print("Unique values in y after encoding:", np.unique(y_encoded))
 
-    X['Grid'] *= 5  # Emphasize the grid positions
+    X['Grid'] *= 5
 
     X_train, X_test, y_train, y_test, sample_weights_train, sample_weights_test = train_test_split(
         X, y_encoded, sample_weights, test_size=0.1, random_state=42
@@ -126,23 +121,18 @@ def trainModel(X, y, sample_weights):
 
     return best_model, label_encoder
 
-
 def predictTop20(best_model, label_encoder, new_data, original_drivers, original_constructors, allowed_drivers):
     new_predictions = best_model.predict(new_data)
     new_data['Predicted_Position'] = new_predictions
     new_data['Driver'] = original_drivers.head(len(new_data)).values
     new_data['Constructor'] = original_constructors.head(len(new_data)).values
 
-    # Filter by allowed drivers
     new_data = new_data[new_data['Driver'].isin(allowed_drivers)]
 
-    # Sort by predicted position and drop duplicates
     new_data = new_data.sort_values(by='Predicted_Position').drop_duplicates(subset=['Driver'])
 
-    # Ensure unique predicted positions
     new_data['Predicted_Position'] = range(1, len(new_data) + 1)
 
-    # Mapping of drivers to constructors
     driver_constructor_mapping = {
         '#1 Max Verstappen': 'Red Bull',
         '#4 Lando Norris': 'McLaren',
@@ -166,7 +156,6 @@ def predictTop20(best_model, label_encoder, new_data, original_drivers, original
         '#3 Daniel Ricciardo': 'McLaren'
     }
 
-    # Handle cases where there are still less than 20 drivers
     missing_drivers = [driver for driver in allowed_drivers if driver not in new_data['Driver'].values]
     for i, driver in enumerate(missing_drivers):
         new_row = pd.DataFrame({
@@ -176,7 +165,6 @@ def predictTop20(best_model, label_encoder, new_data, original_drivers, original
         })
         new_data = pd.concat([new_data, new_row], ignore_index=True)
 
-    # Assign unique predicted positions again to ensure the range from 1 to 20
     new_data['Predicted_Position'] = range(1, len(new_data) + 1)
 
     print(new_data[['Driver', 'Constructor', 'Grid', 'Laps', 'Points', 'Predicted_Position']])

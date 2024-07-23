@@ -130,7 +130,7 @@ const races = [
     image: "./tracks/qatar.avif",
   },
   {
-    id: "abu_dhabi_grand_prix",
+    id: "abu dhabi_grand_prix",
     name: "Abu Dhabi Grand Prix",
     country: "Abu Dhabi",
     image: "./tracks/abudhabi.avif",

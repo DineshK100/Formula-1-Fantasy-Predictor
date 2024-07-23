@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import "./Header.css";
-import { useAuth } from "../Auth";  // Ensure the correct import path
-import { useLocation } from "react-router-dom";
+import { useAuth } from "../Auth"; // Ensure the correct import path
 
 // I like the idea of putting the design things to the header elements as well
 const Header = () => {
@@ -57,16 +56,14 @@ const Header = () => {
           <div className="right-div navbar-collapse collapse w-100 order-3 dual-collapse2">
             <ul className="navbar-nav ms-auto custom-padding">
               <li className="nav-item">
-                <a className="nav-link" href="/statistics">
+                <a className="nav-link" href="/stats">
                   Statistics
                 </a>
               </li>
               {isAuthenticated ? (
                 <li className="nav-item dropdown">
-                  <a className="nav-link">
-                    Hello, {username}
-                  </a>
-                  <div class = "dropdown-content">
+                  <a className="nav-link">Hello, {username}</a>
+                  <div className="dropdown-content">
                     <a onClick={logout}>Sign Out</a>
                   </div>
                 </li>
