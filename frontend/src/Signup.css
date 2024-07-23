@@ -1,0 +1,21 @@
+/* Signup.css */
+.signup-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .mask {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .signup-container {
+    max-width: 600px; /* Adjust width as needed */
+    width: 100%;
+  }
+  
+  

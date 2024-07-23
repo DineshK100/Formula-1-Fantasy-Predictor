@@ -1,0 +1,114 @@
+
+  .top {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .fantasy-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    margin: 20px;
+    margin-top: 70px;
+    align-items: center;
+    justify-content: center;
+    padding-left: 200px;
+    padding-right: 200px;
+    flex-wrap: wrap;
+    color: white;
+  }
+  
+  .fantasy-card {
+    opacity: 100%;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 2px solid white;
+    border-style: solid solid none none;
+  }
+  
+  .fantasy-card:hover {
+    transform: scale(1.05);
+  }
+
+  .fantasy-name {
+    color: white; 
+  }
+  
+  .fantasy-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    color: red;
+  }
+
+  .fantasy-body {
+    color: white;
+  }
+
+  .fantasy-info {
+    margin-left: 10px;
+  }
+  
+  .fantasy-image {
+    width: 100%;
+    border-radius: 10px;
+  }
+  
+  .main-content {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .sidebar {
+    flex: 0 0 250px;
+  }
+  
+  .predictions-container {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .prediction-section {
+    margin-bottom: 40px;
+  }
+  
+  .prediction-header {
+    margin-bottom: 10px;
+    font-size: 24px;
+    text-align: center;
+  }
+  
+  .predictions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .prediction-item-drivers {
+    background-color: black;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .prediction-item-constructors {
+    background-color: black;
+    margin: 10px;
+    padding: 10px;
+    width: 500px;;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .fantasy-driver-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+
+  .constructor-image {
+    width: 400px;
+  }
