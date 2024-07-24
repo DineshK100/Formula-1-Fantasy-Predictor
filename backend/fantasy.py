@@ -1,6 +1,34 @@
 import pandas as pd
 from .prediction import loadDataBaseData, selectFeatures, calculateSampleWeights, trainModel
+from bs4 import BeautifulSoup
+import requests
 
+def get_current_prices(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    driver_prices = {}
+    constructor_prices = {}
+
+    for row in soup.select('table tbody tr'):
+        cells = row.find_all('td')
+        if len(cells) >= 3:
+            name = cells[0].find('span').text.strip()
+            price_str = cells[2].find('span').text.strip().replace('M', '').replace('$', '').replace('m', '')
+
+            try:
+                price = float(price_str)
+                if 'constructor' in name.lower():
+                    constructor_prices[name] = price
+                else:
+                    driver_prices[name] = price
+            except ValueError:
+                print(f"Could not convert price for {name}: {price_str}")
+
+    return driver_prices, constructor_prices
+    
+    
+        
 def simulate_event(data, event_name):
     data = data.copy()
     X, y = selectFeatures(data)
@@ -85,6 +113,10 @@ def main(race):
     race_name = race
     budget = 100
     
+    # current driver prices. There was no easilyavailable 
+    # databases to scrape real-time data from. The ones that did have the prices
+    # didnt have different components for drivers and constructors so I would need to use 
+    # Selenium and a Web Driver, but do to the time contrainst I put on this project, I wasnt able to learn them.
     driver_prices = {
         '#1 Max Verstappen': 31.0,
         '#4 Lando Norris': 26.1,
