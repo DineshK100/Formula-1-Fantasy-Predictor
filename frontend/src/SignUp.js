@@ -72,20 +72,6 @@ function SignUp() {
                 </div>
                 <div data-mdb-input-init className="form-outline mb-4">
                   <input
-                    name="email"
-                    type="email"
-                    id="form3Example3cg"
-                    className="form-control form-control-lg border border-dark"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label className="form-label" htmlFor="form3Example3cg">
-                    Email
-                  </label>
-                </div>
-                <div data-mdb-input-init className="form-outline mb-4">
-                  <input
                     name="password"
                     type="password"
                     id="form3Example4cg"

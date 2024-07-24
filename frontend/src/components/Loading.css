@@ -3,6 +3,7 @@ body {
   padding: 0;
   height: 100vh;
   background-color: black;
+  font-size: 1.5rem;
 }
 
 .spinner {
@@ -48,11 +49,13 @@ body {
 .loading-header {
   color: white;
   margin-top: -360px;
+  font-size: 2rem;
 }
 
 .loading-text {
   display: flex;
   justify-content: center;
+  font-size: 1.5rem;
 }
 
 .load-bubbles {

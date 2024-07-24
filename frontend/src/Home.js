@@ -25,7 +25,7 @@ function Home() {
   }, [backgrounds.length]);
 
   return (
-    <div className = "outer">
+    <div className="outer">
       <div className="header-container">
         <header>
           <h1>Welcome to GridMaster</h1>
@@ -44,26 +44,33 @@ function Home() {
       </div>
 
       <div className="home-content">
-        <section>
-          <h2>About Us</h2>
-          <p>
-            We are passionate about motorsport and provide the latest updates
-            and predictions on Formula 1 races.
+        <section className="about">
+          <h2 className="about-header">About</h2>
+          <p className="about-text">
+            GridMaster is a Formula 1 prediction application aimed at helping F1
+            fanatics accurately determine the finishing grid at any F1 race and
+            to develop optimal fantasy teams to get one over on their friends!
           </p>
         </section>
-        <section>
-          <h2>Our Services</h2>
-          <p>
-            We offer detailed statistics, fantasy league integration, and race
-            predictions to keep you ahead of the game. Explore our features and
-            enhance your Formula 1 experience.
+        <section className="goals">
+          <h2 className="goals-header">Behind the UI</h2>
+          <p className="goals-text">
+            GridMaster leverages advanced technologies to provide accurate
+            Formula 1 predictions and optimal fantasy teams. We use Python web
+            scrapers to collect race data, the XGBoost machine learning model
+            for predictions, and both MongoDB and PostgreSQL for data storage.
+            Our backend is powered by Flask, while React and Chart.js create a
+            dynamic and responsive frontend.
           </p>
         </section>
-        <section>
-          <h2>Contact Us</h2>
-          <p>
-            Have any questions or feedback? Feel free to reach out to us. We are
-            here to help you with any information you need.
+        <section className="story">
+          <h2 className="story-header">The Story</h2>
+          <p className="story-text">
+            As an ardent F1 fan, I was curious about the possibility of
+            developing a model that was accurate enough to predict the results
+            of my favorite sport. As an incoming computer science sophmore, I
+            wanted to learn more about different technologies as possible to
+            expand my knowledge-base.
           </p>
         </section>
       </div>

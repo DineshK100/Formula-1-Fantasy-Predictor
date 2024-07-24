@@ -90,6 +90,7 @@ p {
   position: absolute;
   width: 100vw;
   height: 100vh;
+  object-fit: cover;
   opacity: 0;
   transition: opacity 1s ease-in-out;
   filter: brightness(0.6);
@@ -114,4 +115,88 @@ section {
 
 h2 {
   color: white;
+}
+
+.about {
+  border: solid;
+  
+  border-color: white;
+
+  border-width: 10px;
+
+  border-style: solid solid none none;
+
+  border-top-right-radius: 15px;
+
+  z-index: -100;
+}
+
+.about-header {
+  transform: translateY(-45px);
+  background-color: black;
+  z-index: 100000;
+  width:100px;
+  margin-left: -20px;
+  color: rgb(222, 43, 43);
+}
+
+.about-text {
+  transform: translateY(-40px);
+}
+
+.goals {
+  border: solid;
+  
+  border-color: white;
+
+  border-width: 10px;
+
+  border-style: solid none none solid;
+
+  border-top-left-radius: 15px; 
+
+  z-index: -100;
+}
+
+.goals-header {
+  transform: translateY(-45px);
+  background-color: black;
+  z-index: 100000;
+  width:200px;
+  margin-left: 1245px;
+  padding-left: 10px;
+  color: red;
+}
+
+.goals-text {
+  transform: translateY(-40px);
+}
+
+.story {
+  border: solid;
+  
+  border-color: white;
+
+  border-width: 10px;
+
+  border-style: solid solid solid none;
+
+  border-top-left-radius: 15px;
+
+  z-index: -100;
+  height: 200px;
+}
+
+
+.story-header {
+  transform: translateY(-45px);
+  background-color: black;
+  z-index: 100000;
+  width:150px;
+  margin-left: -20px;
+  color: red;
+}
+
+.story-text {
+  transform: translateY(-40px);
 }

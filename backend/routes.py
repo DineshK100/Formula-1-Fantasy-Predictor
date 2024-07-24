@@ -32,7 +32,6 @@ def signup():
         return jsonify({"success": False, "message": "Data must be entered"}), 400
     
     username = data.get('username')
-    email = data.get('email')
     
     password = data.get('password')
     confirm_password = data.get('confirmPassword')
@@ -42,11 +41,9 @@ def signup():
 
     if User.query.filter_by(username=username).first():
         return jsonify({"success": False, "message": "Username already exists"}), 400
-    if User.query.filter_by(email=email).first():
-        return jsonify({"success": False, "message": "Email already exists"}), 400
 
     hashed_password = generate_password_hash(password,method='pbkdf2:sha256')
-    new_user = User(username=username, email=email, password=hashed_password)
+    new_user = User(username=username, password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
 
@@ -55,32 +52,47 @@ def signup():
 
     return jsonify({'token': token, "success": True})
 
-@bp.route("/stats", methods=['POST'])
+@bp.route("/stats", methods=['GET', 'POST'])
 def stats():
-    data = request.get_json(force=True)
-    
-    auth_header = request.headers.get('Authorization')
-    if not auth_header:
-        return jsonify({"success": False, "message": "Authorization header missing"}), 400
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return jsonify({"success": False, "message": "Authorization header missing"}), 400
 
-    token = auth_header.split()[1]
-    username = jwt.decode(token, "5f00cab06c38701cc5c5dfdc06b7e2c8272c9304902967248351d273970c036f", algorithms=["HS256"])
-    user = username['user']
-    
-    race = data.get('race')
-    points = data.get('points')
-    
-    if not race or points is None:
-        return jsonify({"success": False, "message": "Race and points must be provided"}), 400
-    
-    new_entry = Stats(user= user, races=race, points=points)
-    db.session.add(new_entry)
-    db.session.commit()
-    
-    user_stats = Stats.query.filter_by(user=user).all()
-    stats = [{"race": stat.races, "points": stat.points} for stat in user_stats]
-    
-    return jsonify({"success": True, "message": "Data added successfully", "stats": stats})
+        token = auth_header.split()[1]
+        username = jwt.decode(token, "5f00cab06c38701cc5c5dfdc06b7e2c8272c9304902967248351d273970c036f", algorithms=["HS256"])
+        user = username['user']
+        
+        race = data.get('race')
+        points = data.get('points')
+        
+        if not race or points is None:
+            return jsonify({"success": False, "message": "Race and points must be provided"}), 400
+        
+        new_entry = Stats(user=user, races=race, points=points)
+        db.session.add(new_entry)
+        db.session.commit()
+        
+        user_stats = Stats.query.filter_by(user=user).all()
+        stats = [{"race": stat.races, "points": stat.points} for stat in user_stats]
+        
+        return jsonify({"success": True, "message": "Data added successfully", "stats": stats})
+
+    elif request.method == 'GET':
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return jsonify({"success": False, "message": "Authorization header missing"}), 400
+
+        token = auth_header.split()[1]
+        username = jwt.decode(token, "5f00cab06c38701cc5c5dfdc06b7e2c8272c9304902967248351d273970c036f", algorithms=["HS256"])
+        user = username['user']
+        
+        user_stats = Stats.query.filter_by(user=user).all()
+        stats = [{"race": stat.races, "points": stat.points} for stat in user_stats]
+        
+        return jsonify({"success": True, "stats": stats})
 
 
 
