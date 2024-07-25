@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "./components/Sidebar";
-import Loader from "./components/Loading";
-import "./Predict.css";
+import Sidebar from "./components/Sidebar/Sidebar";
+import Loader from "./components/Loading/Loading";
+import "./styles/Predict.css";
 
 // Make it look like the formula 1 selector grid
 // Then when one is selected the Loading icon shows up and then animation to show the positions

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Loader from "./components/Loading";
-import Sidebar from "./components/Sidebar";
-import "./Fantasy.css";
+import Loader from "./components/Loading/Loading";
+import Sidebar from "./components/Sidebar/Sidebar";
+import "./styles/Fantasy.css";
 
 const races = [
   {

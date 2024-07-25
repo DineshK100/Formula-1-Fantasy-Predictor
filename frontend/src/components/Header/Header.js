@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import "./Header.css";
-import { useAuth } from "../Auth"; // Ensure the correct import path
+import { useAuth } from "../../Auth"; // Ensure the correct import path
 
 // I like the idea of putting the design things to the header elements as well
 const Header = () => {

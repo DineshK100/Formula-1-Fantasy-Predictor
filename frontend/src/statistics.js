@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Chart, registerables } from "chart.js";
-import "./Statistics.css";
+import "./styles/Statistics.css";
 import { useAuth } from "./Auth"; // Ensure the correct import path
 
 // Register all necessary Chart.js components
