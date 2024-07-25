@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./Home.css";
+import "./styles/Home.css";
 
 function Home() {
   const [imageIndex, setImageIndex] = useState(0);

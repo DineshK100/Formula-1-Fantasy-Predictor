@@ -4,7 +4,7 @@ import Home from "./Home";
 import Predict from "./Predict";
 import SignUp from "./SignUp";
 import Fantasy from "./Fantasy";
-import Header from "./components/Header";
+import Header from "./components/Header/Header";
 import Statistics from "./statistics";
 import Login from "./Login";
 
