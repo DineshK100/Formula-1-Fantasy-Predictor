@@ -113,7 +113,7 @@ const races = [
     image: "./tracks/brazil.avif",
   },
   {
-    id: "las_vegas_grand_prix",
+    id: "las vegas_grand_prix",
     name: "Las Vegas Grand Prix",
     country: "United States",
     image: "./tracks/vegas.avif",
